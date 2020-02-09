@@ -15,6 +15,7 @@ export default class Main extends Component {
             newRepo: '',
             repositories: [],
             loading: false,
+            hasError: false,
         };
     }
 
@@ -43,27 +44,35 @@ export default class Main extends Component {
     };
 
     handleSubmit = async e => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        this.setState({ loading: true });
+            this.setState({ loading: true, hasError: false });
 
-        const { newRepo, repositories } = this.state;
+            const { newRepo, repositories } = this.state;
 
-        const response = await api.get(`/repos/${newRepo}`);
+            if (repositories.filter(repo => repo.name === newRepo).length) {
+                throw new Error('Repositório duuplicado');
+            }
 
-        const data = {
-            name: response.data.full_name,
-        };
+            const response = await api.get(`/repos/${newRepo}`);
 
-        this.setState({
-            repositories: [...repositories, data],
-            newRepo: '',
-            loading: false,
-        });
+            const data = {
+                name: response.data.full_name,
+            };
+
+            this.setState({
+                repositories: [...repositories, data],
+                newRepo: '',
+                loading: false,
+            });
+        } catch {
+            this.setState({ hasError: true, loading: false });
+        }
     };
 
     render() {
-        const { newRepo, loading, repositories } = this.state;
+        const { newRepo, loading, repositories, hasError } = this.state;
 
         return (
             <Container>
@@ -72,7 +81,7 @@ export default class Main extends Component {
                     Repositórios
                 </h1>
 
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} hasError={hasError}>
                     <input
                         type="text"
                         placeholder="Adicionar repositório"
@@ -80,7 +89,7 @@ export default class Main extends Component {
                         onChange={this.handleInputChange}
                     />
 
-                    <SubmitButton loading={loading}>
+                    <SubmitButton loading={loading} hasError={hasError}>
                         {loading ? (
                             <FaSpinner color="#FFF" size={14} />
                         ) : (
