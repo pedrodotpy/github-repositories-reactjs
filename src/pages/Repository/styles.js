@@ -42,6 +42,12 @@ export const Owner = styled.header`
     }
 `;
 
+export const RepositoryFilter = styled.select`
+    padding: 6px 8px;
+    margin-top: 30px;
+    min-width: 100px;
+`;
+
 export const IssueList = styled.ul`
     padding-top: 30px;
     margin-top: 30px;
@@ -97,6 +103,27 @@ export const IssueList = styled.ul`
         p {
             margin-top: 5px;
             font-size: 12px;
+            color: #999;
+        }
+    }
+`;
+
+export const Pagination = styled.div`
+    margin-top: 10px;
+
+    button {
+        border: 1px solid #999;
+        padding: 6px 8px;
+        margin-right: 10px;
+        font-weight: bold;
+        background: none;
+
+        &:not([disabled]):hover {
+            color: #7159c1;
+        }
+
+        &[disabled] {
+            cursor: not-allowed;
             color: #999;
         }
     }
